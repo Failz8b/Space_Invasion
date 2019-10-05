@@ -1,3 +1,6 @@
+import random
+
+
 class Settings():
     """A class to store all settings for Alien Invasion."""
 
@@ -6,7 +9,7 @@ class Settings():
         # Screen settings.
         self.screen_width = 1200
         self.screen_height = 800
-        self.bg_color = (230, 230, 230)
+        self.bg_color = (30, 30, 30)
         
         # Ship settings.
         self.ship_limit = 3
@@ -18,7 +21,7 @@ class Settings():
         self.bullets_allowed = 3
         
         # Alien settings.
-        self.fleet_drop_speed = 10
+        self.fleet_drop_speed = 5
             
         # How quickly the game speeds up.
         self.speedup_scale = 1.1
@@ -26,6 +29,8 @@ class Settings():
         self.score_scale = 1.5
     
         self.initialize_dynamic_settings()
+
+        self.recently_cd = False
 
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
@@ -35,6 +40,10 @@ class Settings():
         
         # Scoring.
         self.alien_points = 50
+        self.t0_scale = 1.5
+        self.t1_scale = 1.25
+        self.t2_scale = 1
+        self.t3_scale = random.randint(2, 10)
     
         # fleet_direction of 1 represents right, -1 represents left.
         self.fleet_direction = 1
