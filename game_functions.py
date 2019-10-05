@@ -15,17 +15,19 @@ def check_keydown_events(event, ai_settings, screen, ship, bullets):
     elif event.key == pygame.K_LEFT:
         ship.moving_left = True
     elif event.key == pygame.K_SPACE:
-        fire_bullet(ai_settings, screen, ship, bullets)
-    elif event.key == pygame.K_q:
+        ai_settings.hold_space = True
+    elif event.key == pygame.K_ESCAPE:
         sys.exit()
 
 
-def check_keyup_events(event, ship):
+def check_keyup_events(event, ship, ai_settings):
     """Respond to key releases."""
     if event.key == pygame.K_RIGHT:
         ship.moving_right = False
     elif event.key == pygame.K_LEFT:
         ship.moving_left = False
+    elif event.key == pygame.K_SPACE:
+        ai_settings.hold_space = False
 
 
 def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, aliens1, aliens2, aliens3, bullets):
@@ -36,7 +38,7 @@ def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, alie
         elif event.type == pygame.KEYDOWN:
             check_keydown_events(event, ai_settings, screen, ship, bullets)
         elif event.type == pygame.KEYUP:
-            check_keyup_events(event, ship)
+            check_keyup_events(event, ship, ai_settings)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, aliens1, aliens2, aliens3, bullets, mouse_x, mouse_y)
@@ -73,17 +75,28 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
         create_fleet(ai_settings, screen, ship, aliens, aliens1, aliens2, aliens3)
         ship.center_ship()
 
+        # Play in game music
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load('sounds/background/in_game.mp3')
+        pygame.mixer.music.play(-1, 0.0)
+
 
 def fire_bullet(ai_settings, screen, ship, bullets):
     """Fire a bullet, if limit not reached yet."""
     # Create a new bullet, add to bullets group.
-    if len(bullets) < ai_settings.bullets_allowed:
+    if len(bullets) < ai_settings.bullets_allowed and ai_settings.shoot_timer >= ai_settings.shoot_delay:
         new_bullet = Bullet(ai_settings, screen, ship)
         bullets.add(new_bullet)
+        ai_settings.shoot_timer = 0
+        ship.sound_fire.play()
 
 
 def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, play_button):
     """Update images on the screen, and flip to the new screen."""
+    # Shoot Bullet is Space is held down
+    if ai_settings.hold_space:
+        fire_bullet(ai_settings, screen, ship, bullets)
+
     # Redraw the screen, each pass through the loop.
     screen.fill(ai_settings.bg_color)
 
@@ -105,6 +118,9 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
 
     # Make the most recently drawn screen visible.
     pygame.display.flip()
+
+    # Update Timer Variables
+    ai_settings.shoot_timer += 1
 
 
 def update_bullets(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets):
@@ -216,6 +232,11 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, ali
     else:
         stats.game_active = False
         pygame.mouse.set_visible(True)
+
+        # Play Menu Music
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load('sounds/background/menu.mp3')
+        pygame.mixer.music.play(-1, 0.0)
 
     # Empty the list of aliens and bullets.
     aliens.empty()

@@ -24,7 +24,10 @@ class Ship(Sprite):
         # Movement flags.
         self.moving_right = False
         self.moving_left = False
-        
+
+        # Ship sounds
+        self.sound_fire = pygame.mixer.Sound('sounds/ship/shoot.wav')
+
     def center_ship(self):
         """Center the ship on the screen."""
         self.center = self.screen_rect.centerx

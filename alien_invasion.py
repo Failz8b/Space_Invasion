@@ -34,6 +34,10 @@ def run_game():
     # Create the fleet of aliens.
     gf.create_fleet(ai_settings, screen, ship, aliens, aliens1, aliens2, aliens3)
 
+    # Play Menu Music
+    pygame.mixer.music.load('sounds/background/menu.mp3')
+    pygame.mixer.music.play(-1, 0.0)
+
     # Start the main loop for the game.
     while True:
         gf.check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, aliens1, aliens2, aliens3, bullets)
