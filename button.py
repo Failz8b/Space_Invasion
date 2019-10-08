@@ -3,10 +3,11 @@ import pygame.font
 
 class Button():
 
-    def __init__(self, ai_settings, screen, msg):
+    def __init__(self, ai_settings, screen, msg, position):
         """Initialize button attributes."""
         self.screen = screen
         self.screen_rect = screen.get_rect()
+        self.position = position
         
         # Set the dimensions and properties of the button.
         self.width, self.height = 200, 50
@@ -16,7 +17,10 @@ class Button():
         
         # Build the button's rect object, and center it.
         self.rect = pygame.Rect(0, 0, self.width, self.height)
-        self.rect.center = self.screen_rect.center
+        if self.position == 0:
+            self.rect.center = (ai_settings.screen_width / 2, (ai_settings.screen_height - self.height * 5))
+        elif self.position == 1:
+            self.rect.center = (ai_settings.screen_width / 2, (ai_settings.screen_height - self.height * 3))
         
         # The button message only needs to be prepped once.
         self.prep_msg(msg)

@@ -8,7 +8,7 @@ class Settings():
         """Initialize the game's static settings."""
         # Screen settings.
         self.screen_width = 1200
-        self.screen_height = 800
+        self.screen_height = 900
         self.bg_color = (30, 30, 30)
         
         # Ship settings.
@@ -17,7 +17,7 @@ class Settings():
         # Bullet settings.
         self.bullet_width = 3
         self.bullet_height = 15
-        self.bullet_color = 60, 60, 60
+        self.bullet_color = 255, 255, 50
         self.bullets_allowed = 3
         
         # Alien settings.
@@ -40,18 +40,22 @@ class Settings():
         # HOLD buttons
         self.hold_space = False
 
+        # Random UFO
+        self.spawn_ufo = False
+        self.ufo_timer = 0
+        self.ufo_rand = random.randint(500, 10000)
+
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
         self.ship_speed_factor = 1.5
         self.bullet_speed_factor = 3
-        self.alien_speed_factor = 10
+        self.alien_speed_factor = 1
         
         # Scoring.
         self.alien_points = 50
         self.t0_scale = 1.5
         self.t1_scale = 1.25
         self.t2_scale = 1
-        self.t3_scale = random.randint(2, 10)
     
         # fleet_direction of 1 represents right, -1 represents left.
         self.fleet_direction = 1
