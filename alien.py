@@ -86,7 +86,7 @@ class Alien(Sprite):
                 self.anim_timer = 0
                 self.anim_frame = 1
 
-        des_delay = 15
+        des_delay = 25
         self.des_timer += 1
         if self.anim_frame == 3:
             self.des_sound.play()
