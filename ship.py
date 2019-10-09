@@ -24,11 +24,7 @@ class Ship(Sprite):
                     5: 'images/ship/D5.png',
                     6: 'images/ship/D6.png',
                     7: 'images/ship/D7.png',
-                    8: 'images/ship/D8.png',
-                    9: 'images/ship/D9.png',
-                    10: 'images/ship/D10.png',
-                    11: 'images/ship/D11.png',
-                    12: 'images/ship/D12.png'}
+                    8: 'images/ship/D8.png'}
 
         if self.frame == 0:
             self.image = pygame.image.load(self.img[self.frame])
@@ -104,23 +100,7 @@ class Ship(Sprite):
             self.image = pygame.image.load(self.img[8])
             self.frame = 9
             self.des_timer = 0
-        elif self.frame == 9 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[9])
-            self.frame = 10
-            self.des_timer = 0
-        elif self.frame == 10 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[10])
-            self.frame = 11
-            self.des_timer = 0
-        elif self.frame == 11 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[11])
-            self.frame = 12
-            self.des_timer = 0
-        elif self.frame == 12 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[12])
-            self.frame = 13
-            self.des_timer = 0
-        elif self.frame == 13 and self.des_timer >= self.anim_delay*2:
+        elif self.frame == 9 and self.des_timer >= self.anim_delay * 2:
             self.frame = 0
             self.in_anim = False
             self.des_timer = 0

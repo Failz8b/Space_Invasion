@@ -13,6 +13,7 @@ class Settings():
         self.bg_color = (0, 0, 0)
         self.hs_color = (100, 100, 100)
         self.white = (255, 255, 255)
+        self.green = (0, 255, 0)
         
         # Ship settings.
         self.ship_limit = 3
@@ -22,7 +23,7 @@ class Settings():
         self.bullet_height = 15
         self.bullet_color = 255, 255, 50
         self.bullets_allowed = 3
-        
+
         # Alien settings.
         self.fleet_drop_speed = 10
             
@@ -62,18 +63,23 @@ class Settings():
 
         # Font
         self.font = pygame.font.SysFont(None, 48)
+        self.title_font = pygame.font.SysFont(None, 128)
+        self.font_point = pygame.font.SysFont(None, 60)
 
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
         self.ship_speed_factor = 2
         self.bullet_speed_factor = 3
-        self.alien_speed_factor = 10
+        self.alien_speed_factor = 1
         
         # Scoring.
         self.alien_points = 50
         self.t0_scale = 1.5
         self.t1_scale = 1.25
         self.t2_scale = 1
+        self.points_a1 = int(round(self.alien_points * self.t0_scale, -1))
+        self.points_a2 = int(round(self.alien_points * self.t1_scale, -1))
+        self.points_a3 = int(round(self.alien_points * self.t2_scale, -1))
     
         # fleet_direction of 1 represents right, -1 represents left.
         self.fleet_direction = 1

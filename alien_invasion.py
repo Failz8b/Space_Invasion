@@ -41,8 +41,12 @@ def run_game():
     pygame.mixer.music.load('sounds/background/menu.mp3')
     pygame.mixer.music.play(-1, 0.0)
 
+    # Set FPS of game
+    clock = pygame.time.Clock()
+
     # Start the main loop for the game.
     while True:
+        clock.tick(360)
         gf.check_events(ai_settings, screen, stats, sb, play_button, hi_score_button, back_button, ship, aliens,
                         aliens1, aliens2, aliens3, bullets)
         
