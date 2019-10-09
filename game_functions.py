@@ -8,7 +8,7 @@ from bullet import Bullet
 from alien import Alien
 
 
-def check_keydown_events(event, ai_settings, screen, ship, bullets):
+def check_keydown_events(event, ai_settings, ship):
     """Respond to keypresses."""
     if event.key == pygame.K_RIGHT:
         ship.moving_right = True
@@ -30,33 +30,42 @@ def check_keyup_events(event, ship, ai_settings):
         ai_settings.hold_space = False
 
 
-def check_events(ai_settings, screen, stats, sb, play_button, hi_score_button, ship, aliens, aliens1, aliens2, aliens3, bullets):
+def check_events(ai_settings, screen, stats, sb, play_button, hi_score_button, back_button, ship, aliens, aliens1,
+                 aliens2, aliens3, bullets):
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            check_keydown_events(event, ai_settings, screen, ship, bullets)
+            check_keydown_events(event, ai_settings, ship)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship, ai_settings)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, aliens1, aliens2, aliens3, bullets, mouse_x, mouse_y)
-            # check_hi_Score_button(ai_settings, screen, stats, sb, hi_score_button, mouse_x, mouse_y)
+            check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, aliens1, aliens2, aliens3,
+                              bullets, mouse_x, mouse_y)
+            check_hi_score_button(ai_settings, stats, hi_score_button, mouse_x, mouse_y)
+            check_back_button(ai_settings, stats, back_button, mouse_x, mouse_y)
 
 
-"""
-def check_hi_score_button(ai_settings, screen, stats, sb, hi_score_button, mouse_x, mouse_y):
+def check_hi_score_button(ai_settings, stats, hi_score_button, mouse_x, mouse_y):
     button_clicked = hi_score_button.rect.collidepoint(mouse_x, mouse_y)
-    if button_clicked and not stats.game_active:
-        # load and display Hi Score
-"""
+    if button_clicked and not stats.game_active and not ai_settings.hs_screen:
+        ai_settings.hs_screen = True
 
 
-def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, aliens1, aliens2, aliens3, bullets, mouse_x, mouse_y):
+def check_back_button(ai_settings, stats, back_button, mouse_x, mouse_y):
+    button_clicked = back_button.rect.collidepoint(mouse_x, mouse_y)
+    if button_clicked and not stats.game_active and ai_settings.hs_screen:
+        ai_settings.hs_screen = False
+
+
+def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, aliens1, aliens2, aliens3, bullets,
+                      mouse_x, mouse_y):
     """Start a new game when the player clicks Play."""
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
+
         # Reset the game settings.
         ai_settings.initialize_dynamic_settings()
 
@@ -100,20 +109,32 @@ def fire_bullet(ai_settings, screen, ship, bullets):
         ship.sound_fire.play()
 
 
-def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, play_button, hi_score_button):
+def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, play_button,
+                  hi_score_button, back_button):
     """Update images on the screen, and flip to the new screen."""
     # Shoot Bullet is Space is held down
     if ai_settings.hold_space:
         fire_bullet(ai_settings, screen, ship, bullets)
 
+    # Set FPS of game
+    clock = pygame.time.Clock()
+    clock.tick(360)
+
     # UFO?
     if stats.game_active:
         ai_settings.ufo_timer += 1
+        ai_settings.ufo_display += 1
+    else:
+        ai_settings.ufo_timer =0
     if ai_settings.ufo_timer >= ai_settings.ufo_rand:
         ai_settings.spawn_ufo = True
+        for alien in aliens3:
+            alien.ufo_sound.set_volume(.1)
+            alien.ufo_sound.play(1)
     for alien in aliens3:
         if alien.x > ai_settings.screen_width + alien.rect.width:
             alien.kill()
+            alien.ufo_sound.fadeout(1000)
 
     # Redraw the screen, each pass through the loop.
     screen.fill(ai_settings.bg_color)
@@ -130,12 +151,30 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
     # Draw the score information.
     sb.show_score()
 
-    # Draw the play button if the game is inactive.
+    # Draw the play button if the game is inactive or HS screen if HS is active.
     if not stats.game_active:
-        screen.fill(ai_settings.bg_color)
-        play_button.draw_button()
-        hi_score_button.draw_button()
+        if ai_settings.hs_screen:
+            screen.fill(ai_settings.hs_color)
+            back_button.draw_button()
+        else:
+            screen.fill(ai_settings.bg_color)
+            hi_score_button.draw_button()
+
         stats.game_active = False
+        play_button.draw_button()
+
+    ai_settings.alien_number = len(aliens) + len(aliens1) + len(aliens2)
+
+    if ai_settings.alien_number <= 9 and not ai_settings.music_faster:
+        ai_settings.music_pos += pygame.mixer.music.get_pos()
+        music_time = ai_settings.music_pos / 1150
+        pygame.mixer.music.load('sounds/background/in_game_faster.mp3')
+        pygame.mixer.music.play(-1, music_time)
+        ai_settings.music_faster = True
+
+    if ai_settings.ufo_destroyed and ai_settings.ufo_display <= 480:
+        ufo_text = ai_settings.font.render(str(ai_settings.ufo_point), True, ai_settings.white, ai_settings.bg_color)
+        screen.blit(ufo_text, ai_settings.ufo_pos)
 
     # Make the most recently drawn screen visible.
     pygame.display.flip()
@@ -201,11 +240,19 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
 
     if collisions3:
         for aliens3 in collisions3.values():
-            stats.score += ai_settings.alien_points * len(aliens3) * random.randint(2, 10)
+            ai_settings.ufo_point = int(round(ai_settings.alien_points * len(aliens3) * random.randint(2, 10), -1))
+            stats.score += ai_settings.ufo_point
             sb.prep_score()
+            ai_settings.ufo_destroyed = True
+            ai_settings.ufo_display = 0
+            for alien in aliens3:
+                ai_settings.ufo_pos = (alien.rect.x + (alien.rect.width/2), alien.rect.y + (alien.rect.height/2))
+                alien.ufo_sound.Stop()
+                alien.ufo_des_sound.play()
         check_high_score(stats, sb)
 
-    if len(aliens) == 0 and len(aliens1) == 0 and len(aliens2) == 0 and (len(aliens3) == 0 or not ai_settings.spawn_ufo):
+    if len(aliens) == 0 and len(aliens1) == 0 and len(aliens2) == 0 and \
+            (len(aliens3) == 0 or not ai_settings.spawn_ufo):
         # If the entire fleet is destroyed, start a new level.
         aliens3.empty()
         bullets.empty()
@@ -221,11 +268,18 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         ai_settings.ufo_timer = 0
         ai_settings.ufo_rand = random.randint(500, 10000)
         ai_settings.spawn_ufo = False
+        ai_settings.ufo_destroyed = False
+
+        # Go back to slow music
+        ai_settings.music_pos += pygame.mixer.music.get_pos()
+        music_time = ai_settings.music_pos / 870
+        pygame.mixer.music.load('sounds/background/in_game.mp3')
+        pygame.mixer.music.play(-1, music_time)
+        ai_settings.music_faster = False
 
 
 def check_fleet_edges(ai_settings, aliens, aliens1, aliens2):
     """Respond appropriately if any aliens have reached an edge."""
-
     ai_settings.recently_cd = False
     for alien in aliens.sprites():
         if alien.check_edges() and not ai_settings.recently_cd:
@@ -258,13 +312,12 @@ def change_fleet_direction(ai_settings, aliens, aliens1, aliens2):
 
 def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets):
     """Respond to ship being hit by alien."""
+    ship.des_sound.play()
     if stats.ships_left > 0:
         # Decrement ships_left.
         stats.ships_left -= 1
-
         # Update scoreboard.
         sb.prep_ships()
-
     else:
         stats.game_active = False
         pygame.mouse.set_visible(True)
@@ -279,7 +332,20 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, ali
     aliens1.empty()
     aliens2.empty()
     aliens3.empty()
+    for alien in aliens3:
+        alien.kill()
     bullets.empty()
+
+    ship.frame = 1
+    ship.in_anim = True
+    clock = pygame.time.Clock()
+    while ship.in_anim:
+        clock.tick(360)
+        ship.des_timer += 1
+        screen.fill(ai_settings.bg_color)
+        sb.show_score()
+        ship.blitme()
+        pygame.display.flip()
 
     # Create a new fleet, and center the ship.
     create_fleet(ai_settings, screen, ship, aliens, aliens1, aliens2, aliens3)
@@ -320,7 +386,8 @@ def update_aliens(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
     aliens3.update()
 
     # Look for alien-ship collisions.
-    if pygame.sprite.spritecollideany(ship, aliens) or pygame.sprite.spritecollideany(ship, aliens1) or pygame.sprite.spritecollideany(ship, aliens2):
+    if pygame.sprite.spritecollideany(ship, aliens) or pygame.sprite.spritecollideany(ship, aliens1) or \
+            pygame.sprite.spritecollideany(ship, aliens2):
         ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets)
 
     # Look for aliens hitting the bottom of the screen.
@@ -381,4 +448,5 @@ def create_fleet(ai_settings, screen, ship, aliens, aliens1, aliens2, aliens3):
                 frame = 2
             else:
                 frame = 1
-            create_alien(ai_settings, screen, aliens, aliens1, aliens2, aliens3, alien_number, row_number + 1, alien_type, frame)
+            create_alien(ai_settings, screen, aliens, aliens1, aliens2, aliens3, alien_number, row_number + 1,
+                         alien_type, frame)

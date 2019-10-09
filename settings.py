@@ -1,4 +1,5 @@
 import random
+import pygame
 
 
 class Settings():
@@ -9,7 +10,9 @@ class Settings():
         # Screen settings.
         self.screen_width = 1200
         self.screen_height = 900
-        self.bg_color = (30, 30, 30)
+        self.bg_color = (0, 0, 0)
+        self.hs_color = (100, 100, 100)
+        self.white = (255, 255, 255)
         
         # Ship settings.
         self.ship_limit = 3
@@ -43,11 +46,26 @@ class Settings():
         # Random UFO
         self.spawn_ufo = False
         self.ufo_timer = 0
+        self.ufo_display = 0
         self.ufo_rand = random.randint(500, 10000)
+        self.ufo_point = 0
+        self.ufo_destroyed = False
+        self.ufo_pos = (0, 0)
+
+        # Hi Score Screen
+        self.hs_screen = False
+
+        # Music
+        self.music_faster = False
+        self.music_pos = 0
+        self.alien_number = 0
+
+        # Font
+        self.font = pygame.font.SysFont(None, 48)
 
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
-        self.ship_speed_factor = 1.5
+        self.ship_speed_factor = 2
         self.bullet_speed_factor = 3
         self.alien_speed_factor = 1
         

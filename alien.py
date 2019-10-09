@@ -46,6 +46,13 @@ class Alien(Sprite):
 
         # Store the alien's exact position.
         self.x = float(self.rect.x)
+
+        # UFO Sounds
+        self.ufo_sound = pygame.mixer.Sound('sounds/ufo/UFO.wav')
+        self.ufo_des_sound = pygame.mixer.Sound('sounds/ufo/destroyed.wav')
+
+        # Destroyed Sound
+        self.des_sound = pygame.mixer.Sound('sounds/alien/destroyed.wav')
         
     def check_edges(self):
         """Return True if alien is at edge of screen."""
@@ -59,7 +66,8 @@ class Alien(Sprite):
         """Move the alien right or left. Change image if needed"""
         if self.alien_type == 3:
             if self.ai_settings.spawn_ufo:
-                self.x += (self.ai_settings.alien_speed_factor * abs(self.ai_settings.fleet_direction)) * (random.randint(25, 300) / 100)
+                self.x += (self.ai_settings.alien_speed_factor * abs(self.ai_settings.fleet_direction)) * \
+                          (random.randint(25, 300) / 100)
             else:
                 self.x = self.x
         else:
@@ -78,21 +86,22 @@ class Alien(Sprite):
                 self.anim_timer = 0
                 self.anim_frame = 1
 
-        des_delay = 25
+        des_delay = 15
         self.des_timer += 1
         if self.anim_frame == 3:
+            self.des_sound.play()
             self.image = pygame.image.load(self.img3[0])
             self.anim_frame = 4
             self.des_timer = 0
-        elif self.anim_frame == 4 and self.des_timer >= 50:
+        elif self.anim_frame == 4 and self.des_timer >= des_delay:
             self.image = pygame.image.load(self.img3[1])
             self.anim_frame = 5
             self.des_timer = 0
-        elif self.anim_frame == 5 and self.des_timer >= 50:
+        elif self.anim_frame == 5 and self.des_timer >= des_delay:
             self.image = pygame.image.load(self.img3[2])
             self.anim_frame = 6
             self.des_timer = 0
-        elif self.anim_frame == 6 and self.des_timer >= 50:
+        elif self.anim_frame == 6 and self.des_timer >= des_delay:
             self.kill()
             self.des_timer = 0
 

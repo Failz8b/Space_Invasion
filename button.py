@@ -18,17 +18,19 @@ class Button():
         # Build the button's rect object, and center it.
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         if self.position == 0:
-            self.rect.center = (ai_settings.screen_width / 2, (ai_settings.screen_height - self.height * 5))
-        elif self.position == 1:
             self.rect.center = (ai_settings.screen_width / 2, (ai_settings.screen_height - self.height * 3))
-        
+        elif self.position == 1:
+            self.rect.center = (ai_settings.screen_width / 2, (ai_settings.screen_height - self.height * 5))
+        elif self.position == 2:
+            self.rect.center = (ai_settings.screen_width - (self.width/2) - 30,
+                                (ai_settings.screen_height - (self.height/2) - 30))
+
         # The button message only needs to be prepped once.
         self.prep_msg(msg)
 
     def prep_msg(self, msg):
         """Turn msg into a rendered image, and center text on the button."""
-        self.msg_image = self.font.render(msg, True, self.text_color,
-            self.button_color)
+        self.msg_image = self.font.render(msg, True, self.text_color, self.button_color)
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
         
