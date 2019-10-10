@@ -71,8 +71,7 @@ class Alien(Sprite):
         """Move the alien right or left. Change image if needed"""
         if self.alien_type == 3:
             if self.ai_settings.spawn_ufo:
-                self.x += (self.ai_settings.alien_speed_factor * abs(self.ai_settings.fleet_direction)) * \
-                          (random.randint(25, 300) / 100)
+                self.x += random.randint(25, self.ai_settings.ship_speed_factor * 100) / 100
             else:
                 self.x = self.x
         else:

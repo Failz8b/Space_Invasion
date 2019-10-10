@@ -15,7 +15,11 @@ def check_keydown_events(ai_settings, screen, stats, sb, ship, aliens, aliens1, 
     elif event.key == pygame.K_LEFT:
         ship.moving_left = True
     elif event.key == pygame.K_SPACE:
-        ai_settings.hold_space = True
+        if stats.game_active:
+            ai_settings.hold_space = True
+    elif event.key == pygame.K_l:
+        if stats.game_active:
+            ai_settings.hold_l = True
     elif event.key == pygame.K_k:
         if stats.game_active:
             ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets)
@@ -31,6 +35,8 @@ def check_keyup_events(event, ship, ai_settings):
         ship.moving_left = False
     elif event.key == pygame.K_SPACE:
         ai_settings.hold_space = False
+    elif event.key == pygame.K_l:
+        ai_settings.hold_l = False
 
 
 def check_events(ai_settings, screen, stats, sb, play_button, hi_score_button, back_button, ship, aliens, aliens1,
@@ -80,6 +86,7 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
         stats.game_active = True
 
         # Reset the scoreboard images.
+        check_high_score(stats, sb)
         sb.prep_score()
         sb.prep_high_score()
         sb.prep_level()
@@ -118,6 +125,11 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
     # Shoot Bullet is Space is held down
     if ai_settings.hold_space:
         fire_bullet(ai_settings, screen, ship, bullets)
+
+    if ai_settings.hold_l:
+        ai_settings.bullet_width = ai_settings.screen_width * 2
+    else:
+        ai_settings.bullet_width = 3
 
     # UFO?
     if stats.game_active:
@@ -230,7 +242,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
         ai_settings.music_faster = True
 
     if ai_settings.ufo_destroyed and ai_settings.ufo_display <= 180:
-        ufo_text = ai_settings.font.render(str(ai_settings.ufo_point), True, ai_settings.white, ai_settings.bg_color)
+        ufo_text = ai_settings.font.render(str(ai_settings.ufo_point), True, ai_settings.green, ai_settings.bg_color)
         screen.blit(ufo_text, ai_settings.ufo_pos)
 
     # Make the most recently drawn screen visible.
@@ -259,9 +271,14 @@ def check_high_score(stats, sb):
         if stats.score >= sb.hs_list[i]:
             if i == 0:
                 stats.high_score = stats.score
+                break
             else:
-                stats.high_score = sb.hs_list[i-1]
-            sb.prep_high_score()
+                stats.high_score = sb.hs_list[i - 1]
+                break
+        else:
+            stats.high_score = sb.hs_list[9]
+        stats.standing = i + 1
+    sb.prep_high_score()
 
 
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets):
@@ -383,6 +400,8 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, ali
         # Update scoreboard.
         sb.prep_ships()
     else:
+        # Reset the game settings.
+        ai_settings.initialize_dynamic_settings()
         stats.game_active = False
         pygame.mouse.set_visible(True)
 
@@ -415,7 +434,7 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, ali
 
     # Set New UFO timers
     ai_settings.ufo_timer = 0
-    ai_settings.ufo_rand = random.randint(500, 10000)
+    ai_settings.ufo_rand = random.randint(500, 10000) / ai_settings.alien_speed_factor
     ai_settings.spawn_ufo = False
     ai_settings.ufo_destroyed = False
 

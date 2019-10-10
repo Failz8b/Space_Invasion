@@ -43,6 +43,7 @@ class Settings():
 
         # HOLD buttons
         self.hold_space = False
+        self.hold_l = False
 
         # Random UFO
         self.spawn_ufo = False
