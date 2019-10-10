@@ -44,6 +44,12 @@ def run_game():
     # Set FPS of game
     clock = pygame.time.Clock()
 
+    # Open/Create a HS File
+    f = open("hi_scores.txt", "w+")
+    for i in range(10):
+        f.write(str(sb.hs_list[1]) + " %d\r\n")
+    f.close()
+
     # Start the main loop for the game.
     while True:
         clock.tick(360)

@@ -151,6 +151,38 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
     if not stats.game_active:
         if ai_settings.hs_screen:
             screen.fill(ai_settings.hs_color)
+
+            # Display High Scores
+            score = ai_settings.font.render(str(sb.hs_list[0]), False, ai_settings.white)
+            screen.blit(score, (ai_settings.screen_width / 2, 50))
+
+            score1 = ai_settings.font.render(str(sb.hs_list[1]), False, ai_settings.white)
+            screen.blit(score1, (ai_settings.screen_width / 2, 100))
+
+            score2 = ai_settings.font.render(str(sb.hs_list[2]), False, ai_settings.white)
+            screen.blit(score2, (ai_settings.screen_width / 2, 150))
+
+            score3 = ai_settings.font.render(str(sb.hs_list[3]), False, ai_settings.white)
+            screen.blit(score3, (ai_settings.screen_width / 2, 200))
+
+            score4 = ai_settings.font.render(str(sb.hs_list[4]), False, ai_settings.white)
+            screen.blit(score4, (ai_settings.screen_width / 2, 250))
+
+            score5 = ai_settings.font.render(str(sb.hs_list[5]), False, ai_settings.white)
+            screen.blit(score5, (ai_settings.screen_width / 2, 300))
+
+            score6 = ai_settings.font.render(str(sb.hs_list[6]), False, ai_settings.white)
+            screen.blit(score6, (ai_settings.screen_width / 2, 350))
+
+            score7 = ai_settings.font.render(str(sb.hs_list[7]), False, ai_settings.white)
+            screen.blit(score7, (ai_settings.screen_width / 2, 400))
+
+            score8 = ai_settings.font.render(str(sb.hs_list[8]), False, ai_settings.white)
+            screen.blit(score8, (ai_settings.screen_width / 2, 450))
+
+            score9 = ai_settings.font.render(str(sb.hs_list[9]), False, ai_settings.white)
+            screen.blit(score9, (ai_settings.screen_width / 2, 500))
+
             back_button.draw_button()
         else:
             # Fill bg
@@ -239,6 +271,15 @@ def check_high_score(stats, sb):
     if stats.score > stats.high_score:
         stats.high_score = stats.score
         sb.prep_high_score()
+
+'''
+    for j in range(10):
+        if stats.high_score > sb.hs_list[j]:
+            stats.high_score = stats.score
+            for i in range(9 - j):
+                sb.hs_list[9 - i] = sb.hs_list[9 - i - 1]
+            sb.hs_list[0] = stats.score
+'''
 
 
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets):

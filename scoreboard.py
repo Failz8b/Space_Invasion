@@ -23,6 +23,18 @@ class Scoreboard():
         self.prep_level()
         self.prep_ships()
 
+        # Hi Scores
+        self.hs_list = [0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0]
+
     def prep_score(self):
         """Turn the score into a rendered image."""
         rounded_score = int(round(self.stats.score, -1))
