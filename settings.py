@@ -11,12 +11,12 @@ class Settings():
         self.screen_width = 1200
         self.screen_height = 900
         self.bg_color = (0, 0, 0)
-        self.hs_color = (100, 100, 100)
         self.white = (255, 255, 255)
-        self.green = (0, 255, 0)
+        self.green = (0, 200, 0)
+        self.title_color = (255, 255, 255)
         
         # Ship settings.
-        self.ship_limit = 0
+        self.ship_limit = 3
             
         # Bullet settings.
         self.bullet_width = 3
@@ -48,7 +48,7 @@ class Settings():
         self.spawn_ufo = False
         self.ufo_timer = 0
         self.ufo_display = 0
-        self.ufo_rand = random.randint(500, 10000)
+        self.ufo_rand = 500#random.randint(500, 10000)
         self.ufo_point = 0
         self.ufo_destroyed = False
         self.ufo_pos = (0, 0)
@@ -63,14 +63,15 @@ class Settings():
 
         # Font
         self.font = pygame.font.SysFont(None, 48)
-        self.title_font = pygame.font.SysFont(None, 128)
-        self.font_point = pygame.font.SysFont(None, 60)
+        self.title_font = pygame.font.SysFont(None, 160)
+        self.hs_font = pygame.font.SysFont(None, 125)
+        self.font_point = pygame.font.SysFont(None, 64)
 
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
         self.ship_speed_factor = 2
         self.bullet_speed_factor = 3
-        self.alien_speed_factor = 10
+        self.alien_speed_factor = 1
         
         # Scoring.
         self.alien_points = 50

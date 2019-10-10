@@ -45,10 +45,15 @@ def run_game():
     clock = pygame.time.Clock()
 
     # Open/Create a HS File
-    f = open("hi_scores.txt", "w+")
-    for i in range(10):
-        f.write(str(sb.hs_list[1]) + " %d\r\n")
+    f = open("hi_scores.txt", "a+")
     f.close()
+
+    # Read from the file (if any)
+    with open("hi_scores.txt", "r+") as f:
+        for i in range(10):
+            read_line = f.readline()
+            if read_line.strip():
+                sb.hs_list[i] = int(read_line)
 
     # Start the main loop for the game.
     while True:

@@ -16,16 +16,21 @@ class Alien(Sprite):
         self.anim_frame = 1
         self.frame = frame
         self.des_timer = 0
+        self.anim_delay = 0
 
         # Image Dictionaries
         self.img1 = {0: 'images/A0/S1.png',
-                    1: 'images/A1/S1.png',
-                    2: 'images/A2/S1.png',
-                    3: 'images/A3/S1.png'}
+                     1: 'images/A1/S1.png',
+                     2: 'images/A2/S1.png',
+                     3: 'images/A3/S1.png'}
 
         self.img2 = {0: 'images/A0/S2.png',
                      1: 'images/A1/S2.png',
                      2: 'images/A2/S2.png'}
+
+        self.ufo_anim = {0: 'images/A3/S2.png',
+                         1: 'images/A3/S3.png',
+                         2: 'images/A3/S4.png'}
 
         self.img3 = {0: 'images/A_Destroyed/D1.png',
                      1: 'images/A_Destroyed/D2.png',
@@ -74,15 +79,30 @@ class Alien(Sprite):
             self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
 
-        anim_delay = 75
+        self.anim_delay = 75
         self.anim_timer += 1
-        if self.anim_timer >= anim_delay and (self.alien_type == 0 or self.alien_type == 1 or self.alien_type == 2):
+        if self.anim_timer >= self.anim_delay:
             if self.anim_frame == 1:
-                self.image = pygame.image.load(self.img2[self.alien_type])
+                if self.alien_type == 3:
+                    self.image = pygame.image.load(self.ufo_anim[0])
+                else:
+                    self.image = pygame.image.load(self.img2[self.alien_type])
                 self.anim_timer = 0
                 self.anim_frame = 2
             elif self.anim_frame == 2:
-                self.image = pygame.image.load(self.img1[self.alien_type])
+                if self.alien_type == 3:
+                    self.image = pygame.image.load(self.ufo_anim[1])
+                    self.anim_frame = 8
+                else:
+                    self.image = pygame.image.load(self.img1[self.alien_type])
+                    self.anim_frame = 1
+                self.anim_timer = 0
+            elif self.anim_frame == 8:
+                self.image = pygame.image.load(self.ufo_anim[2])
+                self.anim_timer = 0
+                self.anim_frame = 9
+            elif self.anim_frame == 9:
+                self.image = pygame.image.load(self.img1[3])
                 self.anim_timer = 0
                 self.anim_frame = 1
 

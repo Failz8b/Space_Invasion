@@ -8,7 +8,7 @@ from bullet import Bullet
 from alien import Alien
 
 
-def check_keydown_events(event, ai_settings, ship):
+def check_keydown_events(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, event):
     """Respond to keypresses."""
     if event.key == pygame.K_RIGHT:
         ship.moving_right = True
@@ -16,6 +16,9 @@ def check_keydown_events(event, ai_settings, ship):
         ship.moving_left = True
     elif event.key == pygame.K_SPACE:
         ai_settings.hold_space = True
+    elif event.key == pygame.K_k:
+        if stats.game_active:
+            ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets)
     elif event.key == pygame.K_ESCAPE:
         sys.exit()
 
@@ -37,7 +40,7 @@ def check_events(ai_settings, screen, stats, sb, play_button, hi_score_button, b
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            check_keydown_events(event, ai_settings, ship)
+            check_keydown_events(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, event)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship, ai_settings)
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -121,16 +124,16 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
         ai_settings.ufo_timer += 1
         ai_settings.ufo_display += 1
     else:
-        ai_settings.ufo_timer =0
+        ai_settings.ufo_timer = 0
     if ai_settings.ufo_timer >= ai_settings.ufo_rand:
         ai_settings.spawn_ufo = True
         for alien in aliens3:
             alien.ufo_sound.set_volume(.1)
-            alien.ufo_sound.play(1)
+            alien.ufo_sound.play(0)
     for alien in aliens3:
         if alien.x > ai_settings.screen_width + alien.rect.width:
-            alien.kill()
             alien.ufo_sound.fadeout(1000)
+            alien.kill()
 
     # Redraw the screen, each pass through the loop.
     screen.fill(ai_settings.bg_color)
@@ -150,38 +153,26 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
     # Draw the play button if the game is inactive or HS screen if HS is active.
     if not stats.game_active:
         if ai_settings.hs_screen:
-            screen.fill(ai_settings.hs_color)
+            screen.fill(ai_settings.bg_color)
 
             # Display High Scores
-            score = ai_settings.font.render(str(sb.hs_list[0]), False, ai_settings.white)
-            screen.blit(score, (ai_settings.screen_width / 2, 50))
+            hs_shadow = ai_settings.hs_font.render("Hi Scores!!!", True, ai_settings.green, ai_settings.bg_color)
+            hs_title = ai_settings.hs_font.render("Hi Scores!!!", False, ai_settings.title_color)
+            hs_s_rect = hs_shadow.get_rect()
+            hs_t_rect = hs_title.get_rect()
+            hs_s_rect.midtop = ((ai_settings.screen_width / 2) + 3, 105)
+            hs_t_rect.midtop = ((ai_settings.screen_width / 2), 100)
+            screen.blit(hs_shadow, hs_s_rect)
+            screen.blit(hs_title, hs_t_rect)
 
-            score1 = ai_settings.font.render(str(sb.hs_list[1]), False, ai_settings.white)
-            screen.blit(score1, (ai_settings.screen_width / 2, 100))
+            score = [0] * 10
+            score_rect = [(0, 0)] * 10
 
-            score2 = ai_settings.font.render(str(sb.hs_list[2]), False, ai_settings.white)
-            screen.blit(score2, (ai_settings.screen_width / 2, 150))
-
-            score3 = ai_settings.font.render(str(sb.hs_list[3]), False, ai_settings.white)
-            screen.blit(score3, (ai_settings.screen_width / 2, 200))
-
-            score4 = ai_settings.font.render(str(sb.hs_list[4]), False, ai_settings.white)
-            screen.blit(score4, (ai_settings.screen_width / 2, 250))
-
-            score5 = ai_settings.font.render(str(sb.hs_list[5]), False, ai_settings.white)
-            screen.blit(score5, (ai_settings.screen_width / 2, 300))
-
-            score6 = ai_settings.font.render(str(sb.hs_list[6]), False, ai_settings.white)
-            screen.blit(score6, (ai_settings.screen_width / 2, 350))
-
-            score7 = ai_settings.font.render(str(sb.hs_list[7]), False, ai_settings.white)
-            screen.blit(score7, (ai_settings.screen_width / 2, 400))
-
-            score8 = ai_settings.font.render(str(sb.hs_list[8]), False, ai_settings.white)
-            screen.blit(score8, (ai_settings.screen_width / 2, 450))
-
-            score9 = ai_settings.font.render(str(sb.hs_list[9]), False, ai_settings.white)
-            screen.blit(score9, (ai_settings.screen_width / 2, 500))
+            for i in range(10):
+                score[i] = ai_settings.font.render(str(sb.hs_list[i]), False, ai_settings.green)
+                score_rect[i] = score[i].get_rect()
+                score_rect[i].center = (ai_settings.screen_width / 2, ((i + 2) * 60) + 115)
+                screen.blit(score[i], score_rect[i])
 
             back_button.draw_button()
         else:
@@ -190,48 +181,44 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
 
             # Cool Looking Title
             title_shadow = ai_settings.title_font.render("Space Invaders", True, ai_settings.green, ai_settings.bg_color)
+            title = ai_settings.title_font.render("Space Invaders", False, ai_settings.title_color)
             title_rect_s = title_shadow.get_rect()
-            screen.blit(title_shadow, ((ai_settings.screen_width / 2) - (title_rect_s.width / 2) + 3, 30))
-            title = ai_settings.title_font.render("Space Invaders", False, ai_settings.white)
             title_rect = title.get_rect()
-            screen.blit(title, ((ai_settings.screen_width / 2) - (title_rect.width / 2), 25))
+            title_rect_s.midtop = ((ai_settings.screen_width / 2) + 3, 105)
+            title_rect.midtop = ((ai_settings.screen_width / 2), 100)
+            screen.blit(title_shadow, title_rect_s)
+            screen.blit(title, title_rect)
 
             # Point Values
-            a1_text = ai_settings.font_point.render((" = " + str(ai_settings.points_a1) + " Points"), True, ai_settings.green, ai_settings.bg_color)
-            a2_text = ai_settings.font_point.render((" = " + str(ai_settings.points_a2) + " Points"), True, ai_settings.green, ai_settings.bg_color)
-            a3_text = ai_settings.font_point.render((" = " + str(ai_settings.points_a3) + " Points"), True, ai_settings.green, ai_settings.bg_color)
-            a4_text = ai_settings.font_point.render(" = ??? Points", True, ai_settings.green, ai_settings.bg_color)
+            a_text = [0] * 4
+            a_text_rect = [(0, 0)] * 4
+            rect_half = [0] * 4
 
-            screen.blit(a1_text, ((ai_settings.screen_width / 2) - 90, 210))
-            screen.blit(a2_text, ((ai_settings.screen_width / 2) - 90, 290))
-            screen.blit(a3_text, ((ai_settings.screen_width / 2) - 90, 370))
-            screen.blit(a4_text, ((ai_settings.screen_width / 2) - 90, 450))
+            a_text[0] = ai_settings.font_point.render((" = " + str(ai_settings.points_a1) + " Points"), True, ai_settings.green, ai_settings.bg_color)
+            a_text[1] = ai_settings.font_point.render((" = " + str(ai_settings.points_a2) + " Points"), True, ai_settings.green, ai_settings.bg_color)
+            a_text[2] = ai_settings.font_point.render((" = " + str(ai_settings.points_a3) + " Points"), True, ai_settings.green, ai_settings.bg_color)
+            a_text[3] = ai_settings.font_point.render(" = ??? Points", True, ai_settings.green, ai_settings.bg_color)
+
+            for i in range(4):
+                a_text_rect[i] = a_text[i].get_rect()
 
             # Draw Aliens
-            a1 = Alien(ai_settings, screen, 0, 1)
-            a2 = Alien(ai_settings, screen, 1, 1)
-            a3 = Alien(ai_settings, screen, 2, 1)
-            a4 = Alien(ai_settings, screen, 3, 1)
+            a_sprite = [Alien] * 4
+            for i in range(4):
+                a_sprite[i] = Alien(ai_settings, screen, i, 1)
 
-            a1.rect.x = (ai_settings.screen_width / 2) - 160
-            a2.rect.x = (ai_settings.screen_width / 2) - 160
-            a3.rect.x = (ai_settings.screen_width / 2) - 160
-            a4.rect.x = (ai_settings.screen_width / 2) - 160
+            # Balanced, as all things should be
+            for i in range(4):
+                rect_half[i] = (a_sprite[i].rect.width + a_text_rect[i].width + 10) / 2
+                a_text_rect[i].midright = ((ai_settings.screen_width / 2) + rect_half[i], ((i * 80) + 250))
+                a_sprite[i].rect.midleft = ((ai_settings.screen_width / 2) - rect_half[i], ((i * 80) + 250))
+                screen.blit(a_text[i], a_text_rect[i])
+                a_sprite[i].blitme()
 
-            a1.rect.y = 200
-            a2.rect.y = 280
-            a3.rect.y = 360
-            a4.rect.y = 440
-
-            a1.blitme()
-            a2.blitme()
-            a3.blitme()
-            a4.blitme()
-
+            play_button.draw_button()
             hi_score_button.draw_button()
 
         stats.game_active = False
-        play_button.draw_button()
 
     ai_settings.alien_number = len(aliens) + len(aliens1) + len(aliens2)
 
@@ -268,18 +255,13 @@ def update_bullets(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens
 
 def check_high_score(stats, sb):
     """Check to see if there's a new high score."""
-    if stats.score > stats.high_score:
-        stats.high_score = stats.score
-        sb.prep_high_score()
-
-'''
-    for j in range(10):
-        if stats.high_score > sb.hs_list[j]:
-            stats.high_score = stats.score
-            for i in range(9 - j):
-                sb.hs_list[9 - i] = sb.hs_list[9 - i - 1]
-            sb.hs_list[0] = stats.score
-'''
+    for i in range(10):
+        if stats.score >= sb.hs_list[i]:
+            if i == 0:
+                stats.high_score = stats.score
+            else:
+                stats.high_score = sb.hs_list[i-1]
+            sb.prep_high_score()
 
 
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets):
@@ -295,7 +277,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
             for alien in aliens:
                 if alien.anim_frame < 3:
                     alien.anim_frame = 3
-                    ai_settings.points_a1 = ai_settings.alien_points * len(aliens) * ai_settings.t0_scale
+                    ai_settings.points_a1 = round(int(ai_settings.alien_points * len(aliens) * ai_settings.t0_scale), -1)
                     stats.score += ai_settings.points_a1
                     sb.prep_score()
         check_high_score(stats, sb)
@@ -305,7 +287,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
             for alien in aliens1:
                 if alien.anim_frame < 3:
                     alien.anim_frame = 3
-                    ai_settings.points_a2 = ai_settings.alien_points * len(aliens1) * ai_settings.t1_scale
+                    ai_settings.points_a2 = round(int(ai_settings.alien_points * len(aliens1) * ai_settings.t1_scale), -1)
                     stats.score += ai_settings.points_a2
                     sb.prep_score()
         check_high_score(stats, sb)
@@ -315,7 +297,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
             for alien in aliens2:
                 if alien.anim_frame < 3:
                     alien.anim_frame = 3
-                    ai_settings.points_a3 = ai_settings.alien_points * len(aliens2) * ai_settings.t2_scale
+                    ai_settings.points_a3 = round(int(ai_settings.alien_points * len(aliens2) * ai_settings.t2_scale), -1)
                     stats.score += ai_settings.points_a3
                     sb.prep_score()
         check_high_score(stats, sb)
@@ -404,6 +386,18 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, ali
         stats.game_active = False
         pygame.mouse.set_visible(True)
 
+        for j in range(10):
+            if stats.score >= sb.hs_list[j]:
+                for i in range(9 - j):
+                    sb.hs_list[9 - i] = sb.hs_list[9 - i - 1]
+                sb.hs_list[j] = stats.score
+                break
+
+        # Open/Create a HS File
+        with open("hi_scores.txt", "w+") as f:
+            for i in range(10):
+                f.write(str(sb.hs_list[i]) + "\n")
+
         # Play Menu Music
         pygame.mixer.music.stop()
         pygame.mixer.music.load('sounds/background/menu.mp3')
@@ -413,10 +407,17 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, ali
     aliens.empty()
     aliens1.empty()
     aliens2.empty()
-    aliens3.empty()
     for alien in aliens3:
         alien.kill()
+        alien.ufo_sound.stop()
+    aliens3.empty()
     bullets.empty()
+
+    # Set New UFO timers
+    ai_settings.ufo_timer = 0
+    ai_settings.ufo_rand = random.randint(500, 10000)
+    ai_settings.spawn_ufo = False
+    ai_settings.ufo_destroyed = False
 
     ship.frame = 1
     ship.in_anim = True
@@ -528,5 +529,4 @@ def create_fleet(ai_settings, screen, ship, aliens, aliens1, aliens2, aliens3):
                 frame = 2
             else:
                 frame = 1
-            create_alien(ai_settings, screen, aliens, aliens1, aliens2, aliens3, alien_number, row_number + 1,
-                         alien_type, frame)
+            create_alien(ai_settings, screen, aliens, aliens1, aliens2, aliens3, alien_number, row_number + 1, alien_type, frame)

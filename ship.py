@@ -69,44 +69,14 @@ class Ship(Sprite):
         """Draw the ship at its current location."""
         if self.frame == 0:
             self.image = pygame.image.load(self.img[0])
-        elif self.frame == 1:
-            self.image = pygame.image.load(self.img[1])
-            self.frame = 2
-            self.des_timer = 0
-        elif self.frame == 2 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[2])
-            self.frame = 3
-            self.des_timer = 0
-        elif self.frame == 3 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[3])
-            self.frame = 4
-            self.des_timer = 0
-        elif self.frame == 4 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[4])
-            self.frame = 5
-            self.des_timer = 0
-        elif self.frame == 5 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[5])
-            self.frame = 6
-            self.des_timer = 0
-        elif self.frame == 6 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[6])
-            self.frame = 7
-            self.des_timer = 0
-        elif self.frame == 7 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[7])
-            self.frame = 8
-            self.des_timer = 0
-        elif self.frame == 8 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[8])
-            self.frame = 9
-            self.des_timer = 0
-        elif self.frame == 9 and self.des_timer >= self.anim_delay:
-            self.image = pygame.image.load(self.img[9])
-            self.frame = 10
-            self.des_timer = 0
-        elif self.frame == 10 and self.des_timer >= self.anim_delay * 4:
-            self.frame = 0
-            self.in_anim = False
-            self.des_timer = 0
+
+        if self.in_anim:
+            if self.des_timer >= self.anim_delay:
+                self.image = pygame.image.load(self.img[self.frame])
+                self.frame += 1
+                self.des_timer = 0
+                if self.frame == 10:
+                    self.frame = 0
+                    self.in_anim = False
+
         self.screen.blit(self.image, self.rect)
