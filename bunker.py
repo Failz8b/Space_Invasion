@@ -11,7 +11,8 @@ class Bunker(Sprite):
         self.screen = screen
         self.ai_settings = ai_settings
 
-        self.image = pygame.image.load('images/bunker/b1.png')
+        self.image = pygame.image.load('images/bunker/b1.png').convert_alpha()
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
 
         self.rect.x = self.rect.width
@@ -23,3 +24,12 @@ class Bunker(Sprite):
     def blitme(self):
         """Draw the bunker at its current state."""
         self.screen.blit(self.image, self.rect)
+
+    def image_update(self):
+        """Update the image"""
+        temp = self.image.convert_alpha()
+        for x in range(temp.get_width()):
+            for y in range(temp.get_height()):
+                if temp.get_at((x, y)) == (0, 0, 0, 255):
+                    temp.set_at((x, y), (0, 0, 0, 0))
+        self.image = temp

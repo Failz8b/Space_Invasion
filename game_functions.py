@@ -151,7 +151,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
     if random.randint(0, 100) < ai_settings.abullet_frequency:
         a_group = random.choice((aliens, aliens1, aliens2))
         for alien in a_group:
-            if random.randint(0, 100) < 20:
+            if random.randint(0, 100) < 5:
                 afire_bullet(ai_settings, screen, alien, abullets, stats)
 
     # UFO?
@@ -333,12 +333,12 @@ def check_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, alie
     collisions1 = pygame.sprite.groupcollide(bullets, aliens1, True, False)
     collisions2 = pygame.sprite.groupcollide(bullets, aliens2, True, False)
     collisions3 = pygame.sprite.groupcollide(bullets, aliens3, True, True)
-    collisions4 = pygame.sprite.groupcollide(bullets, bunkers, True, True)
+    collisions4 = pygame.sprite.groupcollide(bullets, bunkers, True, False, pygame.sprite.collide_mask)
     collisions5 = pygame.sprite.groupcollide(bunkers, aliens, True, False)
     collisions6 = pygame.sprite.groupcollide(bunkers, aliens1, True, False)
     collisions7 = pygame.sprite.groupcollide(bunkers, aliens2, True, False)
     collisions8 = pygame.sprite.spritecollide(ship, abullets, True)
-    collisions9 = pygame.sprite.groupcollide(abullets, bunkers, True, True)
+    collisions9 = pygame.sprite.groupcollide(abullets, bunkers, True, False, pygame.sprite.collide_mask)
 
     if collisions:
         for aliens in collisions.values():
@@ -388,8 +388,16 @@ def check_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, alie
         check_high_score(stats, sb)
 
     if collisions4:
+        for bullet in collisions4.keys():
+            ai_settings.c_x = bullet.rect.centerx
+            ai_settings.c_y = int(bullet.y)
         for bunkers in collisions4.values():
             for bunker in bunkers:
+                ai_settings.c_x -= bunker.rect.x
+                ai_settings.c_y -= bunker.rect.y
+                pygame.gfxdraw.filled_circle(bunker.image, ai_settings.c_x, ai_settings.c_y, 10, (0, 0, 0, 255))
+                bunker.image_update()
+                bunker.mask = pygame.mask.from_surface(bunker.image)
                 b_channel = pygame.mixer.Channel(2)
                 b_channel.play(bunker.destroyed_sound)
 
@@ -415,8 +423,16 @@ def check_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, alie
         ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, abullets, bunkers)
 
     if collisions9:
+        for bullet in collisions9.keys():
+            ai_settings.c_x = bullet.rect.centerx
+            ai_settings.c_y = int(bullet.y) + bullet.rect.height
         for bunkers in collisions9.values():
             for bunker in bunkers:
+                ai_settings.c_x -= bunker.rect.x
+                ai_settings.c_y -= bunker.rect.y
+                pygame.gfxdraw.filled_circle(bunker.image, ai_settings.c_x, ai_settings.c_y, 50, (0, 0, 0, 255))
+                bunker.image_update()
+                bunker.mask = pygame.mask.from_surface(bunker.image)
                 b_channel = pygame.mixer.Channel(2)
                 b_channel.play(bunker.destroyed_sound)
 
@@ -654,21 +670,18 @@ def create_fleet(ai_settings, screen, ship, aliens, aliens1, aliens2, aliens3):
 def get_number_bunkers(ai_settings, bunker_width):
     """Determine the number of aliens that fit in a row."""
     available_space_x = ai_settings.screen_width
-    number_bunker = int(available_space_x / (8 * bunker_width))
+    number_bunker = int(available_space_x / (4 * bunker_width))
     return number_bunker
 
 
-def create_bunker(ai_settings, screen, ship, bunkers, bunker_number, row_number):
+def create_bunker(ai_settings, screen, ship, bunkers, bunker_number):
     """Create a bunker, and place it in the row."""
-    for i in range(2):
-        bunker = Bunker(ai_settings, screen)
-        bunker_width = bunker.rect.width
-        bunker_height = bunker.rect.height
-        bunker.x = (8 * bunker_width * (bunker_number + 1)) - (3 * bunker_width) - (bunker_width * (i + 1))
-        bunker.rect.x = bunker.x
-        bunker.rect.y = ai_settings.screen_height - ship.rect.height - 30 - (2 * bunker.rect.height) + \
-                        (row_number * bunker_height)
-        bunkers.add(bunker)
+    bunker = Bunker(ai_settings, screen)
+    bunker_width = bunker.rect.width
+    bunker.x = (4 * bunker_width * (bunker_number + 1)) - (5 * bunker_width / 2)
+    bunker.rect.x = bunker.x
+    bunker.rect.y = ai_settings.screen_height - ship.rect.height - 30 - bunker.rect.height
+    bunkers.add(bunker)
 
 
 def create_bunker_array(ai_settings, screen, ship, bunkers):
@@ -678,5 +691,4 @@ def create_bunker_array(ai_settings, screen, ship, bunkers):
 
     # Create Defense Array
     for bunker_number in range(number_bunkers):
-        for row_number in range(2):
-            create_bunker(ai_settings, screen, ship, bunkers, bunker_number, row_number)
+        create_bunker(ai_settings, screen, ship, bunkers, bunker_number)

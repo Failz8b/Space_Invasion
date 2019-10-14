@@ -86,7 +86,7 @@ class Settings():
         self.abullet_speed_factor = 1
         self.alien_speed_factor = 1
         self.abullets_allowed = 5
-        self.abullet_frequency = 1
+        self.abullet_frequency = 10
         
         # Scoring.
         self.alien_points = 50
