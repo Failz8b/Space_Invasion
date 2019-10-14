@@ -124,15 +124,17 @@ def fire_bullet(ai_settings, screen, ship, bullets):
         new_bullet = Bullet(ai_settings, screen, ship, 0)
         # Cheat Bullets
         if ai_settings.hold_l:
-            new_bullet.image = pygame.transform.scale(new_bullet.image, (ai_settings.screen_width * 2, 15))
+            new_bullet.image = pygame.transform.scale(new_bullet.image, (ai_settings.screen_width * 2, 30))
             new_bullet.rect = new_bullet.image.get_rect()
             new_bullet.mask = pygame.mask.from_surface(new_bullet.image)
             new_bullet.rect.centerx = ship.rect.centerx
+            new_bullet.rect.y = ship.rect.y
         else:
             new_bullet.image = pygame.transform.scale(new_bullet.image, (3, 15))
             new_bullet.rect = new_bullet.image.get_rect()
             new_bullet.mask = pygame.mask.from_surface(new_bullet.image)
             new_bullet.rect.centerx = ship.rect.centerx
+            new_bullet.rect.y = ship.rect.y
         bullets.add(new_bullet)
         ai_settings.shoot_timer = 0
         ship.sound_fire.play()
@@ -285,7 +287,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
         pygame.mixer.music.play(-1, music_time)
         ai_settings.music_faster = True
 
-    if ai_settings.ufo_destroyed and ai_settings.ufo_display <= 180:
+    if ai_settings.ufo_destroyed and ai_settings.ufo_display <= 180 / ai_settings.sdf:
         ufo_text = ai_settings.font.render(str(ai_settings.ufo_point), True, ai_settings.green, ai_settings.bg_color)
         screen.blit(ufo_text, ai_settings.ufo_pos)
 

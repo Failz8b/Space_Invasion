@@ -14,7 +14,9 @@ class Settings():
         self.white = (255, 255, 255)
         self.green = (0, 200, 0)
         self.title_color = (255, 255, 255)
-        
+        # Scale Down Factor to make the game run smoother"
+        self.sdf = 2
+
         # Ship settings.
         self.ship_limit = 3
             
@@ -36,9 +38,9 @@ class Settings():
 
         # Timer to disallow bullet spam
         self.shoot_timer = 0
-        self.shoot_delay = 50
+        self.shoot_delay = 75 / self.sdf
         self.abullet_timer = 0
-        self.abullet_wait = 10
+        self.abullet_wait = 20 / self.sdf
 
         # HOLD buttons
         self.hold_space = False
@@ -73,10 +75,10 @@ class Settings():
 
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
-        self.ship_speed_factor = 2
-        self.bullet_speed_factor = 3
-        self.abullet_speed_factor = 1
-        self.alien_speed_factor = 1
+        self.ship_speed_factor = 2 * self.sdf
+        self.bullet_speed_factor = 3 * self.sdf
+        self.abullet_speed_factor = 1 * self.sdf
+        self.alien_speed_factor = 1 * self.sdf
         self.abullets_allowed = 5
         self.abullet_frequency = 10
         

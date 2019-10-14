@@ -13,7 +13,7 @@ class Ship(Sprite):
 
         # Destroyed Timers
         self.des_timer = 0
-        self.anim_delay = 30
+        self.anim_delay = 30 / self.ai_settings.sdf
         self.in_anim = False
 
         # Load the ship image, and get its rect.

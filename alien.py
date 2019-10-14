@@ -82,7 +82,7 @@ class Alien(Sprite):
             self.x += (self.ai_settings.alien_speed_factor * self.ai_settings.fleet_direction)
         self.rect.x = self.x
 
-        self.anim_delay = 75
+        self.anim_delay = 75 / self.ai_settings.sdf
         self.anim_timer += 1
         if self.anim_timer >= self.anim_delay:
             if self.anim_frame == 1:
@@ -109,7 +109,7 @@ class Alien(Sprite):
                 self.anim_timer = 0
                 self.anim_frame = 1
 
-        des_delay = 25
+        des_delay = 20 / self.ai_settings.sdf
         self.des_timer += 1
         if self.anim_frame == 3:
             self.des_sound.play()

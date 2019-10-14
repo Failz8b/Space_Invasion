@@ -61,7 +61,7 @@ def run_game():
 
     # Start the main loop for the game.
     while True:
-        clock.tick(480)
+        clock.tick(240 / ai_settings.sdf)
         gf.check_events(ai_settings, screen, stats, sb, play_button, hi_score_button, back_button, ship, aliens,
                         aliens1, aliens2, aliens3, bullets, abullets, bunkers)
         
