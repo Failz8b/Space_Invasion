@@ -395,7 +395,7 @@ def check_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, alie
             for bunker in bunkers:
                 ai_settings.c_x -= bunker.rect.x
                 ai_settings.c_y -= bunker.rect.y
-                pygame.gfxdraw.filled_circle(bunker.image, ai_settings.c_x, ai_settings.c_y, 10, (0, 0, 0, 255))
+                pygame.gfxdraw.filled_circle(bunker.image, ai_settings.c_x, ai_settings.c_y, 20, (0, 0, 0, 255))
                 bunker.image_update()
                 bunker.mask = pygame.mask.from_surface(bunker.image)
                 b_channel = pygame.mixer.Channel(2)
@@ -442,6 +442,7 @@ def check_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, alie
         aliens3.empty()
         bullets.empty()
         abullets.empty()
+        bunkers.empty()
         ai_settings.increase_speed()
 
         # Increase level.
@@ -539,6 +540,7 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, ali
     aliens3.empty()
     bullets.empty()
     abullets.empty()
+    bunkers.empty()
 
     # Set New UFO timers
     ai_settings.ufo_timer = 0

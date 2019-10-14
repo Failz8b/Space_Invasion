@@ -19,15 +19,7 @@ class Settings():
         self.ship_limit = 3
             
         # Bullet settings.
-        self.bullet_width = 3
-        self.bullet_height = 15
-        self.bullet_color = 255, 255, 50
         self.bullets_allowed = 3
-
-        # Alien Bullet Settings
-        self.abullet_width = 15
-        self.abullet_height = 15
-        self.abullet_color = 255, 50, 50
 
         # Alien settings.
         self.fleet_drop_speed = 10

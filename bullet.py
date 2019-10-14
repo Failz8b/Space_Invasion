@@ -31,10 +31,8 @@ class Bullet(Sprite):
 
         # Bullet differences
         if btype == 0:
-            self.color = ai_settings.bullet_color
             self.speed_factor = ai_settings.bullet_speed_factor
         else:
-            self.color = ai_settings.abullet_color
             self.speed_factor = ai_settings.abullet_speed_factor
 
     def update(self):
