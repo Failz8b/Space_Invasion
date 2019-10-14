@@ -148,7 +148,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
         ai_settings.bullet_width = 3
 
     """Aliens shooting"""
-    if random.randint(0, 100) < 1:
+    if random.randint(0, 100) < ai_settings.abullet_frequency:
         a_group = random.choice((aliens, aliens1, aliens2))
         for alien in a_group:
             if random.randint(0, 100) < 20:
@@ -167,7 +167,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
             alien.ufo_sound.set_volume(.1)
             alien.ufo_sound.play()
             '''
-            if alien.ufo_sound_playing == False:
+            if not alien.ufo_sound_playing:
                 u_channel = pygame.mixer.Channel(1)
                 u_channel.play(alien.ufo_sound)
                 alien.ufo_sound_playing = True
@@ -211,7 +211,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
             screen.blit(hs_title, hs_t_rect)
 
             score = [0] * 10
-            score_rect = [(0, 0)] * 10
+            score_rect = [pygame.Rect] * 10
 
             for i in range(10):
                 score[i] = ai_settings.font.render(str(sb.hs_list[i]), False, ai_settings.green)

@@ -28,7 +28,6 @@ class Settings():
         self.abullet_width = 15
         self.abullet_height = 15
         self.abullet_color = 255, 50, 50
-        self.abullets_allowed = 5
 
         # Alien settings.
         self.fleet_drop_speed = 10
@@ -57,7 +56,7 @@ class Settings():
         self.spawn_ufo = False
         self.ufo_timer = 0
         self.ufo_display = 0
-        self.ufo_rand = 500#random.randint(500, 10000)
+        self.ufo_rand = random.randint(500, 10000)
         self.ufo_point = 0
         self.ufo_destroyed = False
         self.ufo_pos = (0, 0)
@@ -86,6 +85,8 @@ class Settings():
         self.bullet_speed_factor = 3
         self.abullet_speed_factor = 1
         self.alien_speed_factor = 1
+        self.abullets_allowed = 5
+        self.abullet_frequency = 1
         
         # Scoring.
         self.alien_points = 50
@@ -105,5 +106,9 @@ class Settings():
         self.bullet_speed_factor *= self.speedup_scale
         self.abullet_speed_factor *= self.speedup_scale
         self.alien_speed_factor *= self.speedup_scale
+        if self.abullets_allowed < 9:
+            self.abullets_allowed += 1
+        if self.abullet_frequency < 20:
+            self.abullet_frequency +=1
         
         self.alien_points = int(self.alien_points * self.score_scale)
