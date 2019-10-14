@@ -13,12 +13,10 @@ class Bullet(Sprite):
 
         # Create bullet rect at (0, 0), then set correct position.
         if btype == 0:
-            # self.rect = pygame.Rect(0, 0, ai_settings.bullet_width, ai_settings.bullet_height)
             self.image = pygame.image.load('images/bullet/B1.png').convert_alpha()
             self.rect = self.image.get_rect()
             self.mask = pygame.mask.from_surface(self.image)
         else:
-            # self.rect = pygame.Rect(0, 0, ai_settings.abullet_width, ai_settings.abullet_height)
             self.image = pygame.image.load('images/bullet/B2.png').convert_alpha()
             self.rect = self.image.get_rect()
             self.mask = pygame.mask.from_surface(self.image)
@@ -47,5 +45,4 @@ class Bullet(Sprite):
 
     def draw_bullet(self):
         """Draw the bullet to the screen."""
-        # pygame.draw.rect(self.screen, self.color, self.rect)
         self.screen.blit(self.image, self.rect)

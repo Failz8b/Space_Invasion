@@ -122,6 +122,17 @@ def fire_bullet(ai_settings, screen, ship, bullets):
     # Create a new bullet, add to bullets group.
     if len(bullets) < ai_settings.bullets_allowed and ai_settings.shoot_timer >= ai_settings.shoot_delay:
         new_bullet = Bullet(ai_settings, screen, ship, 0)
+        # Cheat Bullets
+        if ai_settings.hold_l:
+            new_bullet.image = pygame.transform.scale(new_bullet.image, (ai_settings.screen_width * 2, 15))
+            new_bullet.rect = new_bullet.image.get_rect()
+            new_bullet.mask = pygame.mask.from_surface(new_bullet.image)
+            new_bullet.rect.centerx = ship.rect.centerx
+        else:
+            new_bullet.image = pygame.transform.scale(new_bullet.image, (3, 15))
+            new_bullet.rect = new_bullet.image.get_rect()
+            new_bullet.mask = pygame.mask.from_surface(new_bullet.image)
+            new_bullet.rect.centerx = ship.rect.centerx
         bullets.add(new_bullet)
         ai_settings.shoot_timer = 0
         ship.sound_fire.play()
@@ -142,10 +153,6 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2
     # Shoot Bullet if Space is held down
     if ai_settings.hold_space:
         fire_bullet(ai_settings, screen, ship, bullets)
-    if ai_settings.hold_l:
-        ai_settings.bullet_width = ai_settings.screen_width * 2
-    else:
-        ai_settings.bullet_width = 3
 
     """Aliens shooting"""
     if random.randint(0, 100) < ai_settings.abullet_frequency:
@@ -333,7 +340,10 @@ def check_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, alie
     collisions1 = pygame.sprite.groupcollide(bullets, aliens1, True, False)
     collisions2 = pygame.sprite.groupcollide(bullets, aliens2, True, False)
     collisions3 = pygame.sprite.groupcollide(bullets, aliens3, True, True)
-    collisions4 = pygame.sprite.groupcollide(bullets, bunkers, True, False, pygame.sprite.collide_mask)
+    if ai_settings.hold_l:
+        collisions4 = pygame.sprite.groupcollide(bullets, bunkers, False, False)
+    else:
+        collisions4 = pygame.sprite.groupcollide(bullets, bunkers, True, False, pygame.sprite.collide_mask)
     collisions5 = pygame.sprite.groupcollide(bunkers, aliens, True, False)
     collisions6 = pygame.sprite.groupcollide(bunkers, aliens1, True, False)
     collisions7 = pygame.sprite.groupcollide(bunkers, aliens2, True, False)
@@ -388,18 +398,19 @@ def check_collisions(ai_settings, screen, stats, sb, ship, aliens, aliens1, alie
         check_high_score(stats, sb)
 
     if collisions4:
-        for bullet in collisions4.keys():
-            ai_settings.c_x = bullet.rect.centerx
-            ai_settings.c_y = int(bullet.y)
-        for bunkers in collisions4.values():
-            for bunker in bunkers:
-                ai_settings.c_x -= bunker.rect.x
-                ai_settings.c_y -= bunker.rect.y
-                pygame.gfxdraw.filled_circle(bunker.image, ai_settings.c_x, ai_settings.c_y, 20, (0, 0, 0, 255))
-                bunker.image_update()
-                bunker.mask = pygame.mask.from_surface(bunker.image)
-                b_channel = pygame.mixer.Channel(2)
-                b_channel.play(bunker.destroyed_sound)
+        if not ai_settings.hold_l:
+            for bullet in collisions4.keys():
+                ai_settings.c_x = bullet.rect.centerx
+                ai_settings.c_y = int(bullet.y)
+            for bunkers in collisions4.values():
+                for bunker in bunkers:
+                    ai_settings.c_x -= bunker.rect.x
+                    ai_settings.c_y -= bunker.rect.y
+                    pygame.gfxdraw.filled_circle(bunker.image, ai_settings.c_x, ai_settings.c_y, 20, (0, 0, 0, 255))
+                    bunker.image_update()
+                    bunker.mask = pygame.mask.from_surface(bunker.image)
+                    b_channel = pygame.mixer.Channel(2)
+                    b_channel.play(bunker.destroyed_sound)
 
     if collisions5:
         for aliens in collisions5.values():
