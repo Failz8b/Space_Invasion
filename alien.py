@@ -55,9 +55,14 @@ class Alien(Sprite):
         # UFO Sounds
         self.ufo_sound = pygame.mixer.Sound('sounds/ufo/UFO.wav')
         self.ufo_des_sound = pygame.mixer.Sound('sounds/ufo/destroyed.wav')
+        self.ufo_sound_playing = False
 
         # Destroyed Sound
         self.des_sound = pygame.mixer.Sound('sounds/alien/destroyed.wav')
+
+        # Shoot Sound
+        self.alien_shoot = pygame.mixer.Sound('sounds/alien/shoot.wav')
+        self.alien_shoot.set_volume(.5)
         
     def check_edges(self):
         """Return True if alien is at edge of screen."""
@@ -71,7 +76,7 @@ class Alien(Sprite):
         """Move the alien right or left. Change image if needed"""
         if self.alien_type == 3:
             if self.ai_settings.spawn_ufo:
-                self.x += random.randint(25, self.ai_settings.ship_speed_factor * 100) / 100
+                self.x += random.randint(25, 101) * self.ai_settings.ship_speed_factor / 100
             else:
                 self.x = self.x
         else:

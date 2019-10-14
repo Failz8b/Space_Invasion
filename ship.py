@@ -46,7 +46,7 @@ class Ship(Sprite):
 
         # Ship sounds
         self.sound_fire = pygame.mixer.Sound('sounds/ship/shoot.wav')
-        self.sound_fire.set_volume(.2)
+        self.sound_fire.set_volume(.5)
         self.des_sound = pygame.mixer.Sound('sounds/ship/destroy.wav')
 
     def center_ship(self):

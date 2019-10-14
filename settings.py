@@ -24,6 +24,12 @@ class Settings():
         self.bullet_color = 255, 255, 50
         self.bullets_allowed = 3
 
+        # Alien Bullet Settings
+        self.abullet_width = 15
+        self.abullet_height = 15
+        self.abullet_color = 255, 50, 50
+        self.abullets_allowed = 5
+
         # Alien settings.
         self.fleet_drop_speed = 10
             
@@ -40,6 +46,8 @@ class Settings():
         # Timer to disallow bullet spam
         self.shoot_timer = 0
         self.shoot_delay = 50
+        self.abullet_timer = 0
+        self.abullet_wait = 10
 
         # HOLD buttons
         self.hold_space = False
@@ -68,10 +76,15 @@ class Settings():
         self.hs_font = pygame.font.SysFont(None, 125)
         self.font_point = pygame.font.SysFont(None, 64)
 
+        # Collision Points
+        c_x = 0
+        c_y = 0
+
     def initialize_dynamic_settings(self):
         """Initialize settings that change throughout the game."""
         self.ship_speed_factor = 2
         self.bullet_speed_factor = 3
+        self.abullet_speed_factor = 1
         self.alien_speed_factor = 1
         
         # Scoring.
@@ -90,6 +103,7 @@ class Settings():
         """Increase speed settings and alien point values."""
         self.ship_speed_factor *= self.speedup_scale
         self.bullet_speed_factor *= self.speedup_scale
+        self.abullet_speed_factor *= self.speedup_scale
         self.alien_speed_factor *= self.speedup_scale
         
         self.alien_points = int(self.alien_points * self.score_scale)

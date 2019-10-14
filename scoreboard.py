@@ -42,15 +42,20 @@ class Scoreboard():
         high_score = int(round(self.stats.high_score, -1))
         high_score_str = "{:,}".format(high_score)
         if high_score == self.stats.score:
-            self.high_score_image = self.font.render("YOU HAVE THE HIGH SCORE!!!", True, self.text_color, self.ai_settings.bg_color)
+            self.high_score_image = self.font.render("YOU HAVE THE HIGH SCORE!!!", True, self.text_color,
+                                                     self.ai_settings.bg_color)
         elif self.stats.standing == 1:
-            self.high_score_image = self.font.render(str(self.stats.standing) + "st Place: " + high_score_str, True, self.text_color, self.ai_settings.bg_color)
+            self.high_score_image = self.font.render(str(self.stats.standing) + "st Place: " + high_score_str, True,
+                                                     self.text_color, self.ai_settings.bg_color)
         elif self.stats.standing == 2:
-            self.high_score_image = self.font.render(str(self.stats.standing) + "nd Place: " + high_score_str, True, self.text_color, self.ai_settings.bg_color)
+            self.high_score_image = self.font.render(str(self.stats.standing) + "nd Place: " + high_score_str, True,
+                                                     self.text_color, self.ai_settings.bg_color)
         elif self.stats.standing == 3:
-            self.high_score_image = self.font.render(str(self.stats.standing) + "rd Place: " + high_score_str, True, self.text_color, self.ai_settings.bg_color)
+            self.high_score_image = self.font.render(str(self.stats.standing) + "rd Place: " + high_score_str, True,
+                                                     self.text_color, self.ai_settings.bg_color)
         else:
-            self.high_score_image = self.font.render(str(self.stats.standing) + "th Place: " + high_score_str, True, self.text_color, self.ai_settings.bg_color)
+            self.high_score_image = self.font.render(str(self.stats.standing) + "th Place: " + high_score_str, True,
+                                                     self.text_color, self.ai_settings.bg_color)
                 
         # Center the high score at the top of the screen.
         self.high_score_rect = self.high_score_image.get_rect()

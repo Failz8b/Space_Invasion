@@ -29,13 +29,18 @@ def run_game():
     # Make a ship, a group of bullets, and a group of aliens.
     ship = Ship(ai_settings, screen, 0)
     bullets = Group()
+    abullets = Group()
     aliens = Group()
     aliens1 = Group()
     aliens2 = Group()
     aliens3 = Group()
+    bunkers = Group()
 
     # Create the fleet of aliens.
     gf.create_fleet(ai_settings, screen, ship, aliens, aliens1, aliens2, aliens3)
+
+    # Create Bunkers
+    gf.create_bunker_array(ai_settings, screen, ship, bunkers)
 
     # Play Menu Music
     pygame.mixer.music.load('sounds/background/menu.mp3')
@@ -59,15 +64,17 @@ def run_game():
     while True:
         clock.tick(360)
         gf.check_events(ai_settings, screen, stats, sb, play_button, hi_score_button, back_button, ship, aliens,
-                        aliens1, aliens2, aliens3, bullets)
+                        aliens1, aliens2, aliens3, bullets, abullets, bunkers)
         
         if stats.game_active:
             ship.update()
-            gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets)
-            gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets)
+            gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets,
+                              abullets, bunkers)
+            gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, abullets,
+                             bunkers)
 
-        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, play_button,
-                         hi_score_button, back_button)
+        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, aliens1, aliens2, aliens3, bullets, abullets,
+                         play_button, hi_score_button, back_button, bunkers)
 
 
 run_game()
